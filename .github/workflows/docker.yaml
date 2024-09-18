@@ -17,6 +17,7 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   SUSHI_VERSION: "3.11.0"
+  TARGET_PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   node-base:
@@ -36,8 +37,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Adds static libs for multi-platform builds
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: ${{ env.TARGET_PLATFORMS }}
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -87,8 +94,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Adds static libs for multi-platform builds
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: ${{ env.TARGET_PLATFORMS }}
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -138,8 +151,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Adds static libs for multi-platform builds
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: ${{ env.TARGET_PLATFORMS }}
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
@@ -190,8 +209,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Adds static libs for multi-platform builds
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: ${{ env.TARGET_PLATFORMS }}
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
