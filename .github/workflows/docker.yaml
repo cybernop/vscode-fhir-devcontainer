@@ -66,7 +66,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fsh-sushi
           tags: |
             type=raw,value=${{ matrix.sushi }}-${{ matrix.os }}
-            type=raw,value=${{ matrix.os }},enable=${{ matrix.sushi == env.LATEST_SUSHI }}
+            type=raw,value=${{ matrix.sushi }},enable=${{ matrix.os == env.MAIN_OS }}
             type=raw,value=latest,enable=${{ matrix.sushi == env.LATEST_SUSHI && matrix.os == env.MAIN_OS }}
 
       # Build and push Docker image with Buildx (push on tag)
@@ -127,7 +127,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ig-publisher
           tags: |
             type=raw,value=${{ matrix.sushi }}-${{ matrix.os }}
-            type=raw,value=${{ matrix.os }},enable=${{ matrix.sushi == env.LATEST_SUSHI }}
+            type=raw,value=${{ matrix.sushi }},enable=${{ matrix.os == env.MAIN_OS }}
             type=raw,value=latest,enable=${{ matrix.sushi == env.LATEST_SUSHI && matrix.os == env.MAIN_OS }}
 
       # Build and push Docker image with Buildx (push on tag)
