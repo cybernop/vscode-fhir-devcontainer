@@ -10,10 +10,6 @@ on:
     paths:
       - ".github/workflows/*.yaml"
       - "Dockerfile"
-  pull_request:
-    paths:
-      - ".github/workflows/*.yaml"
-      - "Dockerfile"
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -21,6 +17,8 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
   TARGET_PLATFORMS: linux/amd64,linux/arm64
+  LATEST_SUSHI: "3.11.0"
+  MAIN_OS: "alpine"
 
 jobs:
   sushi:
@@ -28,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        base: [alpine, ubuntu]
-        sushi: ["2.10.2", "3.0.0", "3.4.0", "3.5.0", "3.10.0", "3.11.0", "3.11.1"]
+        os: [alpine, ubuntu]
+        sushi: ["2.10.2", "3.0.0", "3.5.0", "3.10.0", "3.11.0", "3.11.1"]
     permissions:
       contents: read
       packages: write
@@ -39,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Adds static libs for multi-platform builds
       - name: Setup QEMU
@@ -53,7 +51,7 @@ jobs:
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -63,22 +61,24 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/fsh-sushi
           tags: |
-            ${{ matrix.sushi }}-${{ matrix.base }}
+            type=raw,value=${{ matrix.sushi }}-${{ matrix.os }}
+            type=raw,value=${{ matrix.os }},enable=${{ matrix.sushi == env.LATEST_SUSHI }}
+            type=raw,value=latest,enable=${{ matrix.sushi == env.LATEST_SUSHI && matrix.os == env.MAIN_OS }}
 
       # Build and push Docker image with Buildx (push on tag)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
-          push: true
+          push: ${{ github.ref_name == 'main'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          target: fsh-sushi-${{ matrix.base }}
+          target: fsh-sushi-${{ matrix.os }}
           build-args: SUSHI_VERSION=${{ matrix.sushi }}
 
   ig-publisher:
@@ -87,8 +87,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        base: [alpine, ubuntu]
-        sushi: ["2.10.2", "3.0.0", "3.4.0", "3.5.0", "3.10.0", "3.11.0", "3.11.1"]
+        os: [alpine, ubuntu]
+        sushi: ["2.10.2", "3.0.0", "3.5.0", "3.10.0", "3.11.0", "3.11.1"]
     permissions:
       contents: read
       packages: write
@@ -98,7 +98,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Adds static libs for multi-platform builds
       - name: Setup QEMU
@@ -112,7 +112,7 @@ jobs:
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
       - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -122,20 +122,22 @@ jobs:
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/ig-publisher
           tags: |
-            ${{ matrix.sushi }}-${{ matrix.base }}
+            type=raw,value=${{ matrix.sushi }}-${{ matrix.os }}
+            type=raw,value=${{ matrix.os }},enable=${{ matrix.sushi == env.LATEST_SUSHI }}
+            type=raw,value=latest,enable=${{ matrix.sushi == env.LATEST_SUSHI && matrix.os == env.MAIN_OS }}
 
       # Build and push Docker image with Buildx (push on tag)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
-          push: true
+          push: ${{ github.ref_name == 'main'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          target: ig-publisher-${{ matrix.base }}
+          target: ig-publisher-${{ matrix.os }}
           build-args: SUSHI_VERSION=${{ matrix.sushi }}
