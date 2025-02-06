@@ -11,24 +11,21 @@ Available images:
 * only FSH sushi: `ghcr.io/cybernop/vscode-fhir-devcontainer/fsh-sushi`
 * FSH sushi and IG publisher: `ghcr.io/cybernop/vscode-fhir-devcontainer/ig-publisher`
 
-Available tags (`<sushi version>-<os base>`):
+Tags have the schema `<sushi version>-<os base>`.
 
-* `3.5.0-alpine`
-* `3.5.0-ubuntu`
-* `3.4.0-alpine`
-* `3.4.0-ubuntu`
-* `3.3.3-alpine`
-* `3.3.3-ubuntu`
-* `3.3.0-alpine`
-* `3.3.0-ubuntu`
-* `3.2.0-alpine`
-* `3.2.0-ubuntu`
-* `3.1.0-alpine`
-* `3.1.0-ubuntu`
-* `3.0.0-alpine`
-* `3.0.0-ubuntu`
-* `2.10.2-alpine`
-* `2.10.2-ubuntu`
+Available `<sushi version>`:
+
+* `2.10.2`
+* `3.0.0`
+* `3.5.0`
+* `3.10.0`
+* `3.11.0`
+* `3.11.1`
+
+Available `<os-base>`:
+
+* `alpine`
+* `ubuntu`
 
 ## Usage
 
