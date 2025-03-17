@@ -19,6 +19,7 @@ env:
   TARGET_PLATFORMS: linux/amd64,linux/arm64
   LATEST_SUSHI: "3.11.0"
   MAIN_OS: "alpine"
+  PLATFORMS: linux/amd64,linux/arm64
 
 jobs:
   sushi:
@@ -89,6 +90,7 @@ jobs:
           push: ${{ github.ref_name == 'main'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: ${{ env.PLATFORMS }}
           target: fsh-sushi-${{ matrix.os }}
           build-args: SUSHI_VERSION=${{ matrix.sushi }}
 
@@ -161,5 +163,6 @@ jobs:
           push: ${{ github.ref_name == 'main'}}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          platforms: ${{ env.PLATFORMS }}
           target: ig-publisher-${{ matrix.os }}
           build-args: SUSHI_VERSION=${{ matrix.sushi }}
